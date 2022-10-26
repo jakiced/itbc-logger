@@ -11,9 +11,11 @@ This is an application that enables registered users to save their vital informa
             </td>
 </table> -->
 
-<code><img width="10%" src="https://www.vectorlogo.zone/logos/java/java-ar21.svg"></code>
+<code><img width="10%" src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white
+"></code>
 <code><img width="10%" src="https://www.vectorlogo.zone/logos/springio/springio-ar21.svg"></code>
-
+https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white
+https://www.vectorlogo.zone/logos/java/java-ar21.svg
 
 
 ## User
