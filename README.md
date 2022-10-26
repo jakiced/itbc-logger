@@ -1,10 +1,10 @@
 # Logger
 ## Tracking application for client made logs
 
-### This is an application that enables registered users to save their vital information, which they can later retrieve by using various filters.
+This is an application that enables registered users to save their vital information, which they can later retrieve by using various filters.
 
 
-# User
+## User
 1. User is able to register by providing
    * username, email, password
    
@@ -22,7 +22,7 @@
    * combining any of the above 
 
 
-# Admin 
+## Admin 
 Admin has privileges to 
    * View all users
    * View number of logs per user
