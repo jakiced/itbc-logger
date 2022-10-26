@@ -5,4 +5,23 @@
 
 
 # User
+1. User is able to register by providing
+   * username, email, password
+2. User can fetch his "key" using username, email, password
+3. User can create a log by entering 
+   * message
+   * log type
+   * date the log was created
+4. User is able to search the logs by 
+   * time 
+   * parts of text present in the log message
+   * type of the log (ERROR, WARNING, INFO) 
+   * combining any of the above 
+
+
+#Admin 
+1. Admin has privileges to 
+   * View all users
+   * View number of logs per user
+   * Change the user's password if requested
 
