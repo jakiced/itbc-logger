@@ -12,7 +12,7 @@ This is an application that enables registered users to save their vital informa
 </table> -->
 
 <code><img width="10%" src="https://www.vectorlogo.zone/logos/java/java-ar21.svg"></code>
-<code><img width="10%" src="https://www.vectorlogo.zone/util/preview.html?image=/logos/springio/springio-ar21.svg"></code>
+<code><img width="10%" src="https://www.vectorlogo.zone/logos/springio/springio-ar21.svg"></code>
 
 
 
