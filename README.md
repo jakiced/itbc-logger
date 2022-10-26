@@ -19,7 +19,7 @@
    * combining any of the above 
 
 
-#Admin 
+# Admin 
 1. Admin has privileges to 
    * View all users
    * View number of logs per user
