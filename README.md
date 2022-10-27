@@ -1,9 +1,10 @@
 # Logger
+---
 ## Tracking application for client made logs
 
 This is an application that enables registered users to save their vital information, which they can later retrieve by using various filters.
 
-## Made with: 
+## Made with : 
 <!-- <table width="320px">
  <td width="80px" align="center">
             <span><strong>Java</strong></span><br>
