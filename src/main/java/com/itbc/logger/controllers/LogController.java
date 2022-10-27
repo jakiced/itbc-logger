@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/api/logs")
@@ -45,5 +47,26 @@ public class LogController {
         logService.save(log);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<LogDTO>> searchLogs(@RequestHeader("Authorization") String token, @RequestParam(required = false) LocalDateTime dateFrom, @RequestParam(required = false) LocalDateTime dateTo, @RequestParam(required = false) String message, @RequestParam(required = false) Integer logType) {
+        LogType logTypeEnum = null;
+        if (logType == 0) logTypeEnum = LogType.ERROR;
+        if (logType == 1) logTypeEnum = LogType.WARNING;
+        if (logType == 2) logTypeEnum = LogType.INFO;
+
+        List<Log> logs = logService.searchLogs(token, dateFrom, dateTo, message, logTypeEnum);
+        List<LogDTO>logDTOS = new ArrayList<>();
+
+        for (Log log: logs) {
+            LogDTO logDTO = new LogDTO();
+            logDTO.setMessage(log.getMessage());
+            logDTO.setCreatedDate(log.getCreatedDate());
+            if (log.getLogType() == LogType.ERROR) logDTO.setLogType(0);
+            if (log.getLogType() == LogType.WARNING) logDTO.setLogType(1);
+            if (log.getLogType() == LogType.INFO) logDTO.setLogType(2);
+        }
+        return new ResponseEntity<>(logDTOS, HttpStatus.OK);
     }
 }
