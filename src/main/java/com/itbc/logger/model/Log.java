@@ -1,4 +1,6 @@
 package com.itbc.logger.model;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 @Entity
@@ -9,6 +11,7 @@ public class Log {
     private Long id;
     private String message;
     private LogType logType;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime createdDate;
     @ManyToOne
     private Client client;
