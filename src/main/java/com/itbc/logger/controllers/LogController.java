@@ -6,6 +6,7 @@ import com.itbc.logger.model.LogType;
 import com.itbc.logger.services.ClientService;
 import com.itbc.logger.services.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +27,13 @@ public class LogController {
     LogService logService;
 
     @PostMapping("/create")
-    public ResponseEntity<LogDTO> createLog(@RequestHeader("Authorization") String token, @Valid @RequestBody LogDTO logDTO) {
+    public ResponseEntity<?> createLog(@RequestHeader("Authorization") String token, @Valid @RequestBody LogDTO logDTO) {
         Optional<Client> client = clientService.findByUsername(token);
         if (client.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Incorrect Token", HttpStatus.UNAUTHORIZED);
         }
         if (logDTO.getMessage().length() >= 1024) {
-            return new ResponseEntity<>(HttpStatus.PAYLOAD_TOO_LARGE);
+            return new ResponseEntity<>("Message should be less than 1024", HttpStatus.PAYLOAD_TOO_LARGE);
         }
 
         Log log = new Log();
@@ -41,20 +42,27 @@ public class LogController {
         log.setCreatedDate(LocalDateTime.now());
 
         if (logDTO.getLogType() == 0) log.setLogType(LogType.ERROR);
-        if (logDTO.getLogType() == 1) log.setLogType(LogType.WARNING);
-        if (logDTO.getLogType() == 2) log.setLogType(LogType.INFO);
-
+        else if (logDTO.getLogType() == 1) log.setLogType(LogType.WARNING);
+        else if (logDTO.getLogType() == 2) log.setLogType(LogType.INFO);
+        else {
+            return new ResponseEntity<>("Incorrect logType", HttpStatus.BAD_REQUEST);
+        }
         logService.save(log);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<LogDTO>> searchLogs(@RequestHeader("Authorization") String token, @RequestParam(required = false) LocalDateTime dateFrom, @RequestParam(required = false) LocalDateTime dateTo, @RequestParam(required = false) String message, @RequestParam(required = false) Integer logType) {
+    public ResponseEntity<?> searchLogs(@RequestHeader("Authorization") String token, @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
+                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo,
+                                        @RequestParam(required = false) String message, @RequestParam(required = false) Integer logType) {
         LogType logTypeEnum = null;
         if (logType == 0) logTypeEnum = LogType.ERROR;
-        if (logType == 1) logTypeEnum = LogType.WARNING;
-        if (logType == 2) logTypeEnum = LogType.INFO;
+        else if (logType == 1) logTypeEnum = LogType.WARNING;
+        else if (logType == 2) logTypeEnum = LogType.INFO;
+        else {
+            return new ResponseEntity<>("Invalid logType", HttpStatus.BAD_REQUEST);
+        }
 
         List<Log> logs = logService.searchLogs(token, dateFrom, dateTo, message, logTypeEnum);
         List<LogDTO>logDTOS = new ArrayList<>();
@@ -66,6 +74,8 @@ public class LogController {
             if (log.getLogType() == LogType.ERROR) logDTO.setLogType(0);
             if (log.getLogType() == LogType.WARNING) logDTO.setLogType(1);
             if (log.getLogType() == LogType.INFO) logDTO.setLogType(2);
+
+            logDTOS.add(logDTO);
         }
         return new ResponseEntity<>(logDTOS, HttpStatus.OK);
     }

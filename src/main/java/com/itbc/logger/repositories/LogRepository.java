@@ -14,7 +14,7 @@ import java.util.List;
 public interface LogRepository extends JpaRepository<Log, Long> {
 
     int countByClient(Client client);
-    @Query("select l from Log l WHERE l.client.username = :username and (:dateFrom is null or l.createdDate >= :dateFrom) and (:dateFrom is null or l.createdDate <= :dateTo) and" +
-            " (:dateFrom is null or l.createdDate <= :dateTo) and (:message is null or l.message like %:message%) and (:logType is null or l.logType = :logType)")
+    @Query("select l from Log l WHERE l.client.username = :username and (:dateFrom is null or l.createdDate >= :dateFrom) and (:dateTo is null or l.createdDate <= :dateTo) and" +
+            " (:message is null or l.message like %:message%) and (:logType is null or l.logType = :logType)")
     List<Log> searchLogs(String username, LocalDateTime dateFrom, LocalDateTime dateTo, String message, LogType logType);
 }

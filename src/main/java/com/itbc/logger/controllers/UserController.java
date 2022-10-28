@@ -25,9 +25,9 @@ public class UserController {
     private LogService logService;
 
     @PostMapping("/register")
-    public ResponseEntity<ClientDTO> registerClient(@Valid @RequestBody ClientDTO clientDTO) {
+    public ResponseEntity<?> registerClient(@Valid @RequestBody ClientDTO clientDTO) {
         if (clientService.findByUsername(clientDTO.getUsername()).isPresent() || clientService.findByEmail(clientDTO.getEmail()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Username or email already exists", HttpStatus.CONFLICT);
         }
         Client client = new Client();
         client.setEmail(clientDTO.getEmail());
@@ -40,27 +40,27 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         Optional<Client> client = clientService.findByUsername(loginDTO.getAccount());
         if ((client.isEmpty()) || !(client.get().getPassword().equals(loginDTO.getPassword()))) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Email/Username or password incorrect", HttpStatus.BAD_REQUEST);
         }
 
         TokenDTO tokenDTO = new TokenDTO();
         tokenDTO.setToken(client.get().getUsername());
-        return new ResponseEntity<>(tokenDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<ClientSearchDTO>> getClients(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> getClients(@RequestHeader("Authorization") String token) {
         Optional<Client> optionalClient = clientService.findByUsername(token);
         if (optionalClient.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Incorrect Token", HttpStatus.FORBIDDEN);
         }
         if (!optionalClient.get().isAdmin()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Correct Token but not admin", HttpStatus.UNAUTHORIZED);
         }
-        List<Client> clients = clientService.findAll();
+        List<Client> clients = clientService.findByIsAdmin(false);
         List<ClientSearchDTO> clientSearchDTOS = new ArrayList<>();
         for(Client client: clients) {
             ClientSearchDTO clientSearchDTO = new ClientSearchDTO();
@@ -77,13 +77,15 @@ public class UserController {
     public ResponseEntity changePassword(@RequestHeader("Authorization") String token, @PathVariable long clientId, @RequestBody @Valid PasswordDTO passwordDTO) {
         Optional<Client> client = clientService.findByUsername(token);
         if (client.isEmpty()) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Incorrect token", HttpStatus.FORBIDDEN);
         }
         if (!client.get().isAdmin()) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity("Correct token but not admin", HttpStatus.UNAUTHORIZED);
         }
         Optional<Client> changeClientPassword = clientService.findById(clientId);
         changeClientPassword.get().setPassword(passwordDTO.getPassword());
+
+        clientService.save(changeClientPassword.get());
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

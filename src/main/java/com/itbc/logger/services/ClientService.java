@@ -11,4 +11,6 @@ public interface ClientService {
     public Client save(Client client);
     public List<Client> findAll();
     public Optional<Client> findById(long id);
+
+    List<Client> findByIsAdmin(boolean isAdmin);
 }

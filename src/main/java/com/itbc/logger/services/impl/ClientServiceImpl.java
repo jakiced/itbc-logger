@@ -37,4 +37,9 @@ public class ClientServiceImpl implements ClientService {
     public Optional<Client> findById(long id) {
         return clientRepository.findById(id);
     }
+
+    @Override
+    public List<Client> findByIsAdmin(boolean isAdmin) {
+        return clientRepository.findByIsAdmin(isAdmin);
+    }
 }
